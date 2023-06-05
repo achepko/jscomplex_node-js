@@ -1,4 +1,9 @@
 import express, { Request, Response } from "express";
+import * as mongoose from "mongoose";
+
+import { configs } from "./configs/config";
+import { User } from "./models/User.mode";
+import { IUser } from "./types/user.type";
 
 const users = [
   {
@@ -33,47 +38,76 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/users", (req: Request, res: Response) => {
-  res.status(200).json(users);
-});
+app.get(
+  "/users",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    try {
+      const users = await User.find();
+      return res.json(users);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
 
-app.get("/users/:id", (req: Request, res: Response) => {
-  const { id } = req.params;
+app.get(
+  "/users/:id",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    try {
+      const user = await User.findById(req.params.id);
 
-  res.status(200).json(users[+id]);
-});
+      return res.json(user);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
 
-app.post("/users", (req: Request, res: Response) => {
-  users.push(req.body);
+app.post(
+  "/users",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    try {
+      const createdUser = await User.create(req.body);
 
-  res.status(201).json({
-    message: "User created.",
-  });
-});
+      return res.status(201).json(createdUser);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
 
-app.put("/users/:id", (req: Request, res: Response) => {
-  const { id } = req.params;
+app.put(
+  "/users/:id",
+  async (req: Request, res: Response): Promise<Response<IUser>> => {
+    try {
+      const { id } = req.params;
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: id },
+        { ...req.body },
+        { returnDocument: "after" }
+      );
 
-  users[+id] = req.body;
+      return res.status(200).json(updatedUser);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
 
-  res.status(200).json({
-    message: "User updated",
-    data: users[+id],
-  });
-});
+app.delete(
+  "/users/:id",
+  async (req: Request, res: Response): Promise<Response<void>> => {
+    try {
+      const { id } = req.params;
+      await User.deleteOne({ _id: id });
 
-app.delete("/users/:id", (req: Request, res: Response) => {
-  const { id } = req.params;
-
-  users.splice(+id, 1);
-
-  res.status(200).json({
-    message: "User deleted",
-  });
-});
-
-const PORT = 5001;
-
-app.listen(PORT, () => {
-  console.log(`Server has started on PORT ${PORT} 🥸`);
+      return res.sendStatus(200);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+app.listen(configs.PORT, () => {
+  mongoose.connect(configs.DB_URL);
+  console.log(`Server has started on PORT ${configs.PORT} 🥸`);
 });

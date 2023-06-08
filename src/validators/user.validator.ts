@@ -16,6 +16,7 @@ export class UserValidator {
       "string.email": "Адрес электронной почты имеет неверный формат",
     });
   static password = Joi.string().regex(regexConstants.PASSWORD).trim();
+
   static create = Joi.object({
     name: this.firstName.required(),
     age: this.age.required(),

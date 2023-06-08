@@ -16,13 +16,17 @@ class UserMiddleware {
       next(e);
     }
   }
-  
-  public isUpdateValid(req:Request,res:Response,next:NextFunction){
+
+  public isUpdateValid(req: Request, res: Response, next: NextFunction) {
     try {
-      
-    }
-    catch (e) {
-      
+      const { error, value } = UserValidator.update.validate(req.body);
+      if (error) {
+        throw new ApiError(error.message, 400);
+      }
+      req.res.locals = value;
+      next();
+    } catch (e) {
+      next(e);
     }
   }
 }

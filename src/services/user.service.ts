@@ -27,7 +27,24 @@ class UserService {
     }
   }
   public async updateById(id: string, data: IUser): Promise<IUser> {
-    return userRepository.create(data);
+    try {
+      return User.findOneAndUpdate(
+        { _id: id },
+        { ...data },
+        { returnDocument: "after" }
+      );
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
+  }
+
+  public async deleteById(id: string): Promise<IUser> {
+    try {
+      await User.deleteOne({ _id: id });
+      return;
+    } catch (e) {
+      throw new ApiError(e.message, e.status);
+    }
   }
 }
 

@@ -5,46 +5,37 @@ import { IUser } from "../types/user.type";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
-    try {
-      return User.find().select("-password");
-    } catch (e) {
-      throw new ApiError(e.message, e.status);
-    }
+    return await User.find();
   }
-
   public async create(data: IUser): Promise<IUser> {
-    try {
-      return userRepository.create(data);
-    } catch (e) {
-      throw new ApiError(e.message, e.status);
-    }
+    return await userRepository.create(data);
   }
   public async findById(id: string): Promise<IUser> {
-    try {
-      return User.findById(id);
-    } catch (e) {
-      throw new ApiError(e.message, e.status);
-    }
-  }
-  public async updateById(id: string, data: IUser): Promise<IUser> {
-    try {
-      return User.findOneAndUpdate(
-        { _id: id },
-        { ...data },
-        { returnDocument: "after" }
-      );
-    } catch (e) {
-      throw new ApiError(e.message, e.status);
-    }
+    return await this.getOneByIdOrThrow(id);
   }
 
-  public async deleteById(id: string): Promise<IUser> {
-    try {
-      await User.deleteOne({ _id: id });
-      return;
-    } catch (e) {
-      throw new ApiError(e.message, e.status);
+  public async updateById(
+    userId: string,
+    data: Partial<IUser>
+  ): Promise<IUser> {
+    await this.getOneByIdOrThrow(userId);
+    return await User.findOneAndUpdate(
+      { _id: userId },
+      { ...data },
+      { returnDocument: "after" }
+    );
+  }
+
+  public async deleteById(userId: string): Promise<void> {
+    await this.getOneByIdOrThrow(userId);
+    await User.findByIdAndRemove({ _id: userId });
+  }
+  private async getOneByIdOrThrow(userId: string): Promise<IUser> {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ApiError("User not found,", 422);
     }
+    return user;
   }
 }
 

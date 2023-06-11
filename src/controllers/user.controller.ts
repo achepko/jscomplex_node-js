@@ -22,7 +22,7 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     try {
-      const createdUser = await userService.create(req.res.locals as IUser);
+      const createdUser = await userService.create(req.body);
 
       return res.status(201).json(createdUser);
     } catch (e) {
@@ -36,7 +36,7 @@ class UserController {
     next: NextFunction
   ): Promise<Response<IUser>> {
     try {
-      const user = await userService.findById(req.params.id);
+      const user = await userService.findById(req.params.userId);
 
       return res.json(user);
     } catch (e) {
@@ -50,8 +50,8 @@ class UserController {
   ): Promise<Response<IUser>> {
     try {
       const updatedUser = await userService.updateById(
-        req.params.id,
-        req.res.locals as IUser
+        req.params.userId,
+        req.body as IUser
       );
       return res.status(200).json(updatedUser);
     } catch (e) {
@@ -64,8 +64,8 @@ class UserController {
     next: NextFunction
   ): Promise<Response<void>> {
     try {
-      const deletedUser = await userService.deleteById(req.params.id);
-      return res.sendStatus(200).json(deletedUser);
+      await userService.deleteById(req.params.userId);
+      return res.sendStatus(204);
     } catch (e) {
       next(e);
     }

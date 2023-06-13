@@ -12,9 +12,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
-app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-  const status = error.status || 500;
-  return res.status(status).json(error.message);
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  const status = err.status || 500;
+  return res.status(status).json({
+    message: err.message,
+    status: err.status,
+  });
 });
 
 app.listen(configs.PORT, () => {

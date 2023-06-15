@@ -12,6 +12,8 @@ class AuthController {
     try {
       await authService.register(req.body);
 
+
+
       return res.sendStatus(201);
     } catch (e) {
       next(e);

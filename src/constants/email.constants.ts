@@ -5,4 +5,8 @@ export const allTemplates = {
     templateName: "register",
     subject: "Welcome to our powerfull CRUD platform",
   },
+  [EEmailActions.FORGOT_PASSWORD]: {
+    templateName: "forgot-password",
+    subject: "Welcome to reset password",
+  },
 };

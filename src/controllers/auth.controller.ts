@@ -62,7 +62,7 @@ class AuthController {
     req: Request,
     res: Response,
     next: NextFunction
-  ) :Promise<Response<void>>{
+  ): Promise<Response<void>> {
     try {
       const { password } = req.body;
       const { jwtPayload } = req.res.locals;
@@ -78,6 +78,18 @@ class AuthController {
       next(e);
     }
   }
+
+  // public async userActivation(
+  //   req: Request,
+  //   res: Response,
+  //   next: NextFunction
+  // ): Promise<Response<void>> {
+  //   try {
+  //
+  //   } catch (e) {
+  //     next(e);
+  //   }
+  // }
 }
 
 export const authController = new AuthController();

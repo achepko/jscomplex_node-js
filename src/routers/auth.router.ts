@@ -1,13 +1,13 @@
 import { Router } from "express";
 
 import { authController } from "../controllers/auth.controller";
+import { EActionTokenTypes } from "../enums/action.token.type-enum";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
 import { userMiddleware } from "../middlewares/user.middleware";
 import { ICredentials } from "../types/token.type";
 import { IUser } from "../types/user.type";
 import { UserValidator } from "../validators";
-import {EActionTokenTypes} from "../enums/action.token.type-enum";
 
 const router = Router();
 

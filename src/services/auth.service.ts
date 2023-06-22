@@ -17,10 +17,22 @@ class AuthService {
     try {
       const hashedPassword = await passwordService.hash(data.password);
 
-      await User.create({ ...data, password: hashedPassword });
-      await emailService.sendMail(data.email, EEmailActions.WELCOME, {
-        name: data.name,
-      });
+      const user = await User.create({ ...data, password: hashedPassword });
+      const actionToken = tokenService.generateActionToken(
+        { _id: user._id },
+        EActionTokenTypes.Activate
+      );
+      await Promise.all([
+        Action.create({
+          actionToken,
+          tokenType: EActionTokenTypes.Activate,
+          _userId: user._id,
+        }),
+        emailService.sendMail(data.email, EEmailActions.WELCOME, {
+          actionToken,
+          name: data.name,
+        }),
+      ]);
     } catch (e) {
       throw new ApiError(e.message, e.status);
     }

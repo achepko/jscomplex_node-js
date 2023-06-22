@@ -43,6 +43,9 @@ class TokenService {
         case EActionTokenTypes.Forgot:
           secret = configs.JWT_FORGOT_SECRET;
           break;
+        case EActionTokenTypes.Activate:
+          secret = configs.JWT_ACTIVATE_SECRET;
+          break;
       }
       return jwt.sign(payload, secret, { expiresIn: "7d" });
     } catch (e) {

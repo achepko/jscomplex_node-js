@@ -17,6 +17,20 @@ class AuthController {
       next(e);
     }
   }
+  public async userActivation(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<Response<void>> {
+    try {
+      const { jwtPayload } = req.res.locals;
+      await authService.userActivation(jwtPayload);
+      return res.sendStatus(200);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   public async login(
     req: Request,
     res: Response,
@@ -78,18 +92,6 @@ class AuthController {
       next(e);
     }
   }
-
-  // public async userActivation(
-  //   req: Request,
-  //   res: Response,
-  //   next: NextFunction
-  // ): Promise<Response<void>> {
-  //   try {
-  //
-  //   } catch (e) {
-  //     next(e);
-  //   }
-  // }
 }
 
 export const authController = new AuthController();

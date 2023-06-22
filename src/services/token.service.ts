@@ -1,10 +1,10 @@
 import * as jwt from "jsonwebtoken";
 
-import { configs } from "../configs/config";
-import { EActionTokenTypes } from "../enums/action.token.type-enum";
-import { ETokenType } from "../enums/token-type.enum";
-import { ApiError } from "../errors";
-import { ITokenPair, ITokenPayload } from "../types/token.type";
+import {configs} from "../configs/config";
+import {EActionTokenTypes} from "../enums/action.token.type-enum";
+import {ETokenType} from "../enums/token-type.enum";
+import {ApiError} from "../errors";
+import {ITokenPair, ITokenPayload} from "../types/token.type";
 
 class TokenService {
   public generateTokenPair(payload: ITokenPayload): ITokenPair {
@@ -61,6 +61,9 @@ class TokenService {
       switch (tokenType) {
         case EActionTokenTypes.Forgot:
           secret = configs.JWT_FORGOT_SECRET;
+          break;
+        case EActionTokenTypes.Activate:
+          secret = configs.JWT_ACTIVATE_SECRET;
           break;
       }
       return jwt.verify(token, secret) as ITokenPayload;

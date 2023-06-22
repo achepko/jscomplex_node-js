@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 
 import { EGenders } from "../enums/user.enum";
+import { EUserStatus } from "../enums/user-status.enum";
 
 const userSchema = new Schema(
   {
@@ -27,9 +28,10 @@ const userSchema = new Schema(
       required: true,
       // select: false,
     },
-    isActivated: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      default: EUserStatus.NonActivated,
+      enum: EUserStatus,
     },
   },
   {

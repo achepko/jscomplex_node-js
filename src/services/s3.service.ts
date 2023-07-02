@@ -1,7 +1,12 @@
 import path from "node:path";
 
-import { DeleteObjectCommand,PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { UploadedFile } from "express-fileupload";
+import { Readable } from "stream";
 import { v4 } from "uuid";
 
 import { configs } from "../configs/config";
@@ -35,11 +40,29 @@ class S3Service {
   }
 
   public async deleteFile(filePath: string): Promise<void> {
-
     await this.client.send(
       new DeleteObjectCommand({
         Bucket: configs.AWS_S3_NAME,
         Key: filePath,
+      })
+    );
+  }
+
+  public async uploadFileStream(
+    stream: Readable,
+    itemType: string,
+    itemId: string,
+    file: UploadedFile
+  ): Promise<void> {
+    const filePath = this.buildPath(itemType, itemId, file.name);
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: configs.AWS_S3_NAME,
+        Key: filePath,
+        Body: stream,
+        ACL: configs.AWS_S3_ACL,
+        ContentType: file.mimetype,
+        ContentLength: file.size,
       })
     );
   }

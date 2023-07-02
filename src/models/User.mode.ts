@@ -28,6 +28,10 @@ const userSchema = new Schema(
       required: true,
       // select: false,
     },
+    avatar: {
+      type: String,
+      required: false,
+    },
     status: {
       type: String,
       default: EUserStatus.NonActivated,

@@ -1,7 +1,10 @@
+import { UploadedFile } from "express-fileupload";
+
 import { ApiError } from "../errors";
 import { User } from "../models/User.mode";
 import { userRepository } from "../repositories/user.repository";
 import { IUser } from "../types/user.type";
+import { s3Service } from "./s3.service";
 
 class UserService {
   public async findAll(): Promise<IUser[]> {
@@ -29,6 +32,22 @@ class UserService {
   public async deleteById(userId: string): Promise<void> {
     await this.getOneByIdOrThrow(userId);
     await User.findByIdAndRemove({ _id: userId });
+  }
+
+  public async uploadAvatar(
+    userId: string,
+    avatar: UploadedFile
+  ): Promise<IUser> {
+    const user = await this.getOneByIdOrThrow(userId);
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
+    const pathToFile = await s3Service.uploadFile(avatar, "user", userId);
+    return await User.findByIdAndUpdate(
+      userId,
+      { $set: { avatar: pathToFile } },
+      { new: true }
+    );
   }
   private async getOneByIdOrThrow(userId: string): Promise<IUser> {
     const user = await User.findById(userId);

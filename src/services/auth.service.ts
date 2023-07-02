@@ -55,6 +55,7 @@ class AuthService {
         _id: user._id,
         name: user.name,
       });
+      console.log(tokensPair, "tokensPair");
 
       await Token.create({
         ...tokensPair,

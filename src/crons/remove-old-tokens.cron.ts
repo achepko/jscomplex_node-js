@@ -7,13 +7,13 @@ import { Token } from "../models/Token.model";
 dayjs.extend(utc);
 
 const tokensRemover = async () => {
-  const previousMonth = dayjs().utc().subtract(1, "day");
+  const previousMonth = dayjs().utc().subtract(30, "day");
   // console.log(previousMonth.toISOString());
   await Token.deleteMany({ createdAt: { $lte: previousMonth } });
 };
 
 export const removeOldTokens = new CronJob(
-  "0 * * * * *",
+  "0 0 * * *",
   tokensRemover,
   null,
   true

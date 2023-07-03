@@ -34,14 +34,21 @@ router.post(
   authController.refresh
 );
 router.post(
-  "/forgot",
+  "/changePassword",
+  commonMiddleware.isBodyValid(UserValidator.changePassword),
+  authMiddleware.checkAccessToken,
+  authController.changePassword
+);
+
+router.post(
+  "/forgotPassword",
   commonMiddleware.isBodyValid(UserValidator.forgotPassword),
   userMiddleware.isUserExist<IUser>("email"),
   authController.forgotPassword
 );
 
 router.put(
-  "/forgot/:token",
+  "/forgotPassword/:token",
   commonMiddleware.isBodyValid(UserValidator.setForgotPassword),
   authMiddleware.checkActionToken(EActionTokenTypes.Forgot),
   authController.setForgotPassword

@@ -40,7 +40,11 @@ export class UserValidator {
   static setForgotPassword = Joi.object({
     password: this.password.required(),
   });
-  static userAcivation = Joi.object({
-    email: this.email.required(),
+  static changePassword = Joi.object({
+    oldPassword: this.password.required(),
+    newPassword: this.password.required(),
   });
+  // static userAcivation = Joi.object({
+  //   email: this.email.required(),
+  // });
 }
